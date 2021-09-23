@@ -31,7 +31,7 @@ export const SwapFunc = (poolInfo: PoolInfo, props: InputInfo): InputInfo => {
     const condition2 = props.assetIn == lpTokenInfo?.assetA ? 1 : 0;
     const amountIn = props.isSwapIn ? props?.amountIn : (props?.amountOut*-1);
 
-    let amountOut = 0;
+    let amountOut: BigNumber;
 
     if(
         !lpTokenInfo ||
@@ -43,17 +43,19 @@ export const SwapFunc = (poolInfo: PoolInfo, props: InputInfo): InputInfo => {
         props.amountIn = 0;
         props.amountOut = 0;
         console.error(`[The input params are not proper]`);
-    } else if(condition1 ^ condition2){
+        return {...props};
+    }
+    if(condition1 ^ condition2){
         lpTokenInfo.reserveB = lpTokenInfo.reserveB + amountIn;
-        amountOut = lpTokenInfo.reserveA - ratio/lpTokenInfo.reserveB;
-        lpTokenInfo.reserveA = lpTokenInfo.reserveA - amountOut;
+        amountOut = new BigNumber(ratio).div(lpTokenInfo.reserveB).minus(lpTokenInfo.reserveA).times(-1);
+        lpTokenInfo.reserveA = amountOut.minus(lpTokenInfo.reserveA).times(-1).toNumber();
     } else {
         lpTokenInfo.reserveA = lpTokenInfo.reserveA + amountIn;
-        amountOut = lpTokenInfo.reserveB - ratio/lpTokenInfo.reserveA;
-        lpTokenInfo.reserveB = lpTokenInfo.reserveB - amountOut;
+        amountOut = new BigNumber(ratio).div(lpTokenInfo.reserveA).minus(lpTokenInfo.reserveB).times(-1);
+        lpTokenInfo.reserveB = amountOut.minus(lpTokenInfo.reserveB).times(-1).toNumber();
     }
 
-    props.isSwapIn ? (props.amountOut = Math.abs(amountOut)) : (props.amountIn = Math.abs(amountOut));
+    props.isSwapIn ? (props.amountOut = Math.abs(amountOut?.toNumber())) : (props.amountIn = Math.abs(amountOut?.toNumber()));
 
     return {...props};
 };

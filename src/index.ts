@@ -1,7 +1,10 @@
 import {AssetEnum, InputInfo, LpTokenInfo, PoolInfo} from "./pool/type";
 import {AddLiquidityFunc, SwapFunc} from "./pool";
 
-
+/**
+ * todo: For numbers with 18 decimal places, there should not be used number type, but string or third party lib, like bignumber.js.
+ *
+ * */
 (() => {
     /**
      * Init pool
