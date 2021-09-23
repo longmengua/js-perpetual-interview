@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    // 指定編譯為ECMAScript的哪個版本。預設為"ES3"
+    "target": "ES6",
+    // 編譯為哪種模組系統。如果target為"ES3"或者"ES5"，預設為"CommonJS"，否則預設為"ES6"
+    "module": "CommonJS",
+    // 模組解析策略，"Classic" 或者 "Node"。如果module為"AMD"、"System"或者"ES6"，預設為"Classic"，否則預設為"Node"
+    "moduleResolution": "Node",
+    // 是否支援使用import cjs from 'cjs'的方式引入commonjs包
+    "esModuleInterop": true,
+    // 編譯過程中需要引入的庫。target為"ES5"時，預設引入["DOM","ES5","ScriptHost"]；target為"ES6"時，預設引入["DOM","ES6","DOM.Iterable","ScriptHost"]
+    "lib": ["ES6"],
+    // 編譯生成的js檔案所輸出的根目錄,預設輸出到ts檔案所在的目錄
+    "outDir": "dist",
+    // 生成相應的.map檔案
+    "sourceMap": true
+  },
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "**/*.spec.ts"
+  ]
+}

@@ -1,1 +1,15 @@
-[Perpetual Protocol 工程師面試前測題](https://www.notion.so/Perpetual-Protocol-e68378a5e17b44b3824ad4e3f21f6873)
+# 🚀 Welcome to your new awesome project!
+
+This project has been created using **webpack-cli**, you can now run
+
+```
+npm run build
+```
+
+or
+
+```
+yarn build
+```
+
+to bundle your application
