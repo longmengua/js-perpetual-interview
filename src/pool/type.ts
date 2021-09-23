@@ -2,6 +2,7 @@
 export enum AssetEnum {
     USD = "USD",
     TWD = "TWD",
+    ETH = "ETH",
 }
 
 export type LpTokenInfo = {
@@ -12,9 +13,11 @@ export type LpTokenInfo = {
 };
 
 export type InputInfo = {
+    isSwapIn: boolean,
     assetIn: AssetEnum,
     assetOut: AssetEnum,
-    amountIn: number,
+    amountIn?: number,
+    amountOut?: number,
 }
 
 export type PoolInfo = Record<string, LpTokenInfo>

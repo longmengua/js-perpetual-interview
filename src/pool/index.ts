@@ -23,27 +23,37 @@ export const BestSwapPath = (poolInfo: PoolInfo, props: InputInfo) => {
     const key = sortAssetName(props.assetIn, props.assetOut);
 };
 
-export const SwapFunc = (poolInfo: PoolInfo, props: InputInfo) => {
+export const SwapFunc = (poolInfo: PoolInfo, props: InputInfo): InputInfo => {
     const key = sortAssetName(props.assetIn, props.assetOut);
     const lpTokenInfo: LpTokenInfo = poolInfo[key];
-    const ratio = lpTokenInfo.reserveA*lpTokenInfo.reserveB;
+    const ratio = lpTokenInfo?.reserveA*lpTokenInfo?.reserveB;
+    const condition1 = props.isSwapIn ? 1 : 0;
+    const condition2 = props.assetIn == lpTokenInfo?.assetA ? 1 : 0;
+    const amountIn = props.isSwapIn ? props?.amountIn : (props?.amountOut*-1);
 
-    let amountOut: number = 0;
-    let reserveA: number = 0;
-    let reserveB: number = 0;
+    let amountOut = 0;
 
-    if(props.assetIn == lpTokenInfo.assetA){
-        reserveA = lpTokenInfo.reserveA + props.amountIn;
-        amountOut = lpTokenInfo.reserveB - ratio/reserveA;
-        reserveB = lpTokenInfo.reserveB - amountOut;
-    } else if (props.assetIn == lpTokenInfo.assetB) {
-        reserveB = lpTokenInfo.reserveB + props.amountIn;
-        amountOut = lpTokenInfo.reserveA - ratio/reserveB;
-        reserveA = lpTokenInfo.reserveA - amountOut;
+    if(
+        !lpTokenInfo ||
+        (condition1 && !props.amountIn) ||
+        (!condition1 && !props.amountOut) ||
+        (!condition1 && condition2 && props.amountOut > lpTokenInfo?.reserveB) ||
+        (!condition1 && !condition2 && props.amountOut > lpTokenInfo?.reserveA)
+    ) {
+        props.amountIn = 0;
+        props.amountOut = 0;
+        console.error(`[The input params are not proper]`);
+    } else if(condition1 ^ condition2){
+        lpTokenInfo.reserveB = lpTokenInfo.reserveB + amountIn;
+        amountOut = lpTokenInfo.reserveA - ratio/lpTokenInfo.reserveB;
+        lpTokenInfo.reserveA = lpTokenInfo.reserveA - amountOut;
+    } else {
+        lpTokenInfo.reserveA = lpTokenInfo.reserveA + amountIn;
+        amountOut = lpTokenInfo.reserveB - ratio/lpTokenInfo.reserveA;
+        lpTokenInfo.reserveB = lpTokenInfo.reserveB - amountOut;
     }
 
-    lpTokenInfo.reserveA = reserveA;
-    lpTokenInfo.reserveB = reserveB;
+    props.isSwapIn ? (props.amountOut = Math.abs(amountOut)) : (props.amountIn = Math.abs(amountOut));
 
-    return amountOut;
+    return {...props};
 };
